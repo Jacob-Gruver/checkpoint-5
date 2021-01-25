@@ -1,13 +1,13 @@
 <template>
   <p>
-    {{ commentProp.body }}
+    {{ commentProp.body }} -
+    {{ commentProp.creator.name }}
   </p>
 </template>
 
 <script>
 import { computed, reactive } from 'vue'
 import { AppState } from '../AppState'
-// import { logger } from '../utils/Logger'
 export default {
   name: 'Comments',
   props: {
@@ -20,7 +20,6 @@ export default {
     const state = reactive({
       account: computed(() => AppState.account)
     })
-    // logger.log('logging from comment', commentProp)
     return {
       state
     }

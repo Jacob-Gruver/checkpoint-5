@@ -9,15 +9,16 @@ class AccountService {
     try {
       const res = await api.get(accounturl)
       AppState.account = res.data
-      logger.log('logging account from Accountservice', AppState.account)
+      // logger.log('logging account from Accountservice', AppState.account)
     } catch (err) {
       logger.error('HAVE YOU STARTED YOUR SERVER YET???', err)
     }
   }
 
-  async getMyBlogs() {
+  async addNewBlog(newBlog) {
     try {
-      await api.get(accounturl + '/blogs')
+      const res = await api.post('/api/blogs', newBlog)
+      logger.log('logging from Account Service', res.data)
     } catch (error) {
       logger.error(error)
     }

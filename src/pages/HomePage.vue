@@ -26,7 +26,6 @@ export default {
       } catch (error) {
         logger.log(error)
       }
-      logger.log(state.account)
     })
     return {
       state
