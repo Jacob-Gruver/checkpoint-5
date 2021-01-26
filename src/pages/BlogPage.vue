@@ -59,7 +59,7 @@ export default {
       async addComment() {
         try {
           logger.log(route.params.id, state.newComment.body)
-          blogService.addComment(route.params.id, state.newComment)
+          blogService.addComment(state.newComment)
         } catch (error) {
           logger.error(error)
         }

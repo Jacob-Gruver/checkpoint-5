@@ -3,80 +3,82 @@
     <div class="row">
       <div class="col">
         <h1>Welcome {{ state.account.name }}</h1>
-        <img class="rounded" :src="state.account.picture" alt="" />
+        <img class="rounded" :src="state.account.picture" />
         <p>{{ state.account.email }}</p>
       </div>
     </div>
     <div class="row">
-      <div class="col" v-for="myBlog in state.myBlogs" :key="myBlog.id">
+      <div class="col" v-for="myBlog in state.myBlogs" :key="myBlog.name">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">
-              {{ myBlog.title }}
-            </h4>
-            <p class="card-text">
-              {{ myBlog.body }} - {{ myBlog.id }}
-            </p>
+            <div>
+              <h4 class="card-title" :contenteditable="state.editBlog" @blur="editBlogTitle($event, myBlog.id)">
+                {{ myBlog.title }}
+              </h4>
+              <p class="card-text" :contenteditable="state.editBlog" @blur="editBlogBody($event, myBlog.id)">
+                {{ myBlog.body }}
+              </p>
+            </div>
             <button class="btn btn-danger" @click="removeBlog(myBlog.id)">
               Remove Blog
             </button>
-            <button class="btn btn-warning" @click="editBlog(myBlog.id)">
+            <button class="btn btn-warning" @click="state.editBlog = true">
               Edit Blog
             </button>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modelId">
-          Add Blog
-        </button>
+  </div>
+  <div class="row">
+    <div class="col">
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modelId">
+        Add Blog
+      </button>
 
-        <!-- Modal -->
-        <div class="modal fade"
-             id="modelId"
-             tabindex="-1"
-             role="dialog"
-             aria-labelledby="modelTitleId"
-             aria-hidden="true"
-        >
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">
-                  Add Blog
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+      <!-- Modal -->
+      <div class="modal fade"
+           id="modelId"
+           tabindex="-1"
+           role="dialog"
+           aria-labelledby="modelTitleId"
+           aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">
+                Add Blog
+              </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form @submit.prevent="alert('this is an alert')">
+                <input type="text"
+                       name="title"
+                       title="title"
+                       class="form-control"
+                       placeholder="Add Title"
+                       v-model="state.newBlog.title"
+                >
+                <input type="text"
+                       name="body"
+                       title="body"
+                       class="form-control"
+                       placeholder="Add Body"
+                       v-model="state.newBlog.body"
+                >
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                  Close
                 </button>
-              </div>
-              <div class="modal-body">
-                <form @submit.prevent="alert('this is an alert')">
-                  <input type="text"
-                         name="title"
-                         title="title"
-                         class="form-control"
-                         placeholder="Add Title"
-                         v-model="state.newBlog.title"
-                  >
-                  <input type="text"
-                         name="body"
-                         title="body"
-                         class="form-control"
-                         placeholder="Add Body"
-                         v-model="state.newBlog.body"
-                  >
-
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    Close
-                  </button>
-                  <button type="submit" @click="addNewBlog" class="btn btn-primary" data-dismiss="modal">
-                    Save
-                  </button>
-                </form>
-              </div>
+                <button type="submit" @click="addNewBlog" class="btn btn-primary" data-dismiss="modal">
+                  Save
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -98,7 +100,8 @@ export default {
       account: computed(() => AppState.account),
       blogs: computed(() => AppState.blogs),
       myBlogs: computed(() => AppState.myBlogs),
-      newBlog: {}
+      newBlog: {},
+      editBlog: false
     })
     onMounted(() => {
       try {
@@ -127,6 +130,20 @@ export default {
       async removeBlog(id) {
         try {
           blogService.removeBlog(id)
+        } catch (error) {
+          logger.log(error)
+        }
+      },
+      async editBlogTitle(e, id) {
+        try {
+          blogService.editBlogTitle(e.target.innerText, id)
+        } catch (error) {
+          logger.log(error)
+        }
+      },
+      async editBlogBody(e, id) {
+        try {
+          blogService.editBlogBody(e.target.innerText, id)
         } catch (error) {
           logger.log(error)
         }

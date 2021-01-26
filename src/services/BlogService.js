@@ -34,10 +34,9 @@ class BlogService {
     }
   }
 
-  async addComment(id, newComment) {
+  async addComment(newComment) {
     try {
       await api.post('/api/comments/', newComment)
-      this.getComments()
     } catch (error) {
       logger.error(error)
     }
@@ -45,8 +44,30 @@ class BlogService {
 
   async removeBlog(id) {
     try {
-      await api.delete(apiUrl, id)
+      await api.delete(apiUrl + id)
       this.getMyblogs()
+    } catch (error) {
+      logger.error(error)
+    }
+  }
+
+  async editBlogTitle(newBlog, id) {
+    try {
+      const blogData = { title: newBlog }
+      const res = await api.put(apiUrl + id, blogData)
+      logger.log(res)
+      AppState.blogs = res.data
+    } catch (error) {
+      logger.error(error)
+    }
+  }
+
+  async editBlogBody(newBlog, id) {
+    try {
+      const blogData = { body: newBlog }
+      const res = await api.put(apiUrl + id, blogData)
+      logger.log(res)
+      AppState.blogs = res.data
     } catch (error) {
       logger.error(error)
     }
