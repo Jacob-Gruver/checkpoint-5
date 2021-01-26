@@ -8,6 +8,7 @@ class BlogService {
   async getblog(id) {
     try {
       const res = await api.get(apiUrl + id)
+      logger.log(res.data)
       AppState.blog = res.data
     } catch (error) {
       logger.error(error)
@@ -34,9 +35,34 @@ class BlogService {
     }
   }
 
-  async addComment(newComment) {
+  async addComment(account, id, newComment) {
     try {
-      await api.post('/api/comments/', newComment)
+      const comm = { body: newComment.body, blog: id, creator: account }
+      logger.log('sevice', newComment.body + id + account + comm)
+      const res = await api.post('/api/comments/', comm)
+      logger.log(res.data)
+      AppState.comments = res.data
+    } catch (error) {
+      logger.error(error)
+    }
+  }
+
+  async editComment(editComment, id) {
+    try {
+      const edit = { body: editComment }
+      const res = await api.put('/api/comments/' + id, edit)
+      logger.log(res.data)
+      AppState.comments = res.data
+    } catch (error) {
+      logger.error(error)
+    }
+  }
+
+  async deleteComment(id) {
+    try {
+      const res = await api.delete('/api/comments/' + id)
+      logger.log(res.data)
+      AppState.comments = res.data
     } catch (error) {
       logger.error(error)
     }

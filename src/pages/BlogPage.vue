@@ -2,8 +2,8 @@
   <div class="blog">
     <div class="row">
       <div class="col">
-        <h1>{{ state.blog.title }}</h1>
-        <Comments v-for="comment in state.comments" :key="comment.id" :comment-prop="comment" />
+        <h1 @click="state.editComments = true">{{ state.blog.title }}</h1>
+        <Comments v-for="comment in state.comments" :key="comment.id" :comment-prop="comment" :contenteditable="state.editComments" @blur="editComment($event, comment.id)" />
       </div>
     </div>
   </div>
@@ -39,7 +39,10 @@ export default {
     const state = reactive({
       blog: computed(() => AppState.blog),
       comments: computed(() => AppState.comments),
-      newComment: {}
+      account: computed(() => AppState.account),
+      newComment: {
+      },
+      editComments: false
     })
     logger.log('logged from blogpage comments', AppState.comments)
     onMounted(async() => {
@@ -58,8 +61,15 @@ export default {
       state,
       async addComment() {
         try {
-          logger.log(route.params.id, state.newComment.body)
-          blogService.addComment(state.newComment)
+          // logger.log('page', state.account)
+          blogService.addComment(state.account.name, state.blog.id, state.newComment)
+        } catch (error) {
+          logger.error(error)
+        }
+      },
+      async editComment(e, id) {
+        try {
+          blogService.editComment(e.target.innerText, id)
         } catch (error) {
           logger.error(error)
         }
